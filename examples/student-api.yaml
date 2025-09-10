@@ -1,0 +1,235 @@
+openapi: 3.1.0
+info:
+  title: NUS Student API
+  description: Simple API for managing NUS student information
+  version: 1.0.0
+  contact:
+    name: NUS IT Support
+    email: support@nus.edu.sg
+
+servers:
+  - url: https://api.nus.edu.sg/v1
+    description: Production server
+
+paths:
+  /students:
+    get:
+      summary: Get all students
+      description: Retrieve a list of all students
+      parameters:
+        - name: faculty
+          in: query
+          description: Filter by faculty
+          schema:
+            type: string
+            enum: [Engineering, Science, Arts, Business]
+        - name: limit
+          in: query
+          description: Number of students to return
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+      responses:
+        '200':
+          description: List of students
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  students:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Student'
+                  total:
+                    type: integer
+                    example: 150
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+    post:
+      summary: Create a new student
+      description: Register a new student in the system
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StudentCreate'
+      responses:
+        '201':
+          description: Student created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Student'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+  /students/{studentId}:
+    parameters:
+      - name: studentId
+        in: path
+        required: true
+        description: Student ID
+        schema:
+          type: string
+          pattern: '^A\d{7}[A-Z]$'
+        example: 'A1234567B'
+    
+    get:
+      summary: Get student by ID
+      description: Retrieve detailed information about a specific student
+      responses:
+        '200':
+          description: Student details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Student'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    put:
+      summary: Update student information
+      description: Update existing student information
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StudentUpdate'
+      responses:
+        '200':
+          description: Student updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Student'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+components:
+  schemas:
+    Student:
+      type: object
+      required:
+        - id
+        - name
+        - email
+        - faculty
+      properties:
+        id:
+          type: string
+          pattern: '^A\d{7}[A-Z]$'
+          example: 'A1234567B'
+          description: NUS student ID
+        name:
+          type: string
+          minLength: 2
+          maxLength: 100
+          example: 'John Doe'
+        email:
+          type: string
+          format: email
+          example: 'john.doe@u.nus.edu'
+          description: NUS student email
+        faculty:
+          type: string
+          enum: [Engineering, Science, Arts, Business]
+          example: 'Engineering'
+        year:
+          type: integer
+          minimum: 1
+          maximum: 4
+          example: 2
+          description: Current academic year
+        gpa:
+          type: number
+          minimum: 0.0
+          maximum: 5.0
+          example: 4.2
+          description: Current GPA
+
+    StudentCreate:
+      type: object
+      required:
+        - name
+        - email
+        - faculty
+      properties:
+        name:
+          type: string
+          minLength: 2
+          maxLength: 100
+          example: 'Jane Smith'
+        email:
+          type: string
+          format: email
+          example: 'jane.smith@u.nus.edu'
+        faculty:
+          type: string
+          enum: [Engineering, Science, Arts, Business]
+          example: 'Science'
+        year:
+          type: integer
+          minimum: 1
+          maximum: 4
+          example: 1
+
+    StudentUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 2
+          maxLength: 100
+        faculty:
+          type: string
+          enum: [Engineering, Science, Arts, Business]
+        year:
+          type: integer
+          minimum: 1
+          maximum: 4
+        gpa:
+          type: number
+          minimum: 0.0
+          maximum: 5.0
+
+    Error:
+      type: object
+      required:
+        - message
+        - code
+      properties:
+        message:
+          type: string
+          example: 'Invalid input provided'
+        code:
+          type: string
+          example: 'VALIDATION_ERROR'
+
+  responses:
+    BadRequest:
+      description: Bad request - invalid input
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            message: 'Invalid student ID format'
+            code: 'VALIDATION_ERROR'
+
+    NotFound:
+      description: Student not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            message: 'Student not found'
+            code: 'NOT_FOUND'

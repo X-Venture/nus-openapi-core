@@ -1,8 +1,9 @@
 import { BaseNode, IBaseSymbolVisitor } from '@x-venture/xapi-parser-tree';
 import { parseJSON, parseYAML } from '@x-venture/xapi-parser';
-import { DefaultDiagnosticCollector, Diagnostic } from '@x-venture/xapi-types';
+import { IDiagnosticsCollector, Diagnostic } from '@x-venture/xapi-types';
 import { isJsonContent } from '@x-venture/xapi-editor-core';
 import { parse as parseYaml } from 'yaml';
+import { DefaultDiagnosticCollector } from './DiagnosticCollector';
 
 export interface ParserResult {
   isValid: boolean;
@@ -30,7 +31,7 @@ export interface OpenAPIInfo {
 }
 
 export class OpenAPIParser {
-  private diagnosticCollector: DefaultDiagnosticCollector;
+  private diagnosticCollector: IDiagnosticsCollector;
 
   constructor() {
     this.diagnosticCollector = new DefaultDiagnosticCollector();
@@ -54,8 +55,7 @@ export class OpenAPIParser {
         ? parseJSON<IBaseSymbolVisitor>(content, this.diagnosticCollector)
         : parseYAML<IBaseSymbolVisitor>(content, this.diagnosticCollector);
 
-      // Get diagnostics
-      const diagnostics = this.diagnosticCollector.getDiagnostics();
+      const diagnostics = this.diagnosticCollector.diagnostics();
       
       // Parse document for structure analysis
       const document = isJson ? JSON.parse(content) : parseYaml(content);

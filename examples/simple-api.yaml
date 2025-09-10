@@ -1,0 +1,169 @@
+openapi: 3.1.0
+info:
+  title: Simple NUS API Example
+  description: |
+    A basic API example perfect for beginners learning OpenAPI.
+    This specification demonstrates fundamental concepts without complexity.
+  version: 1.0.0
+  contact:
+    name: NUS Student Support
+    email: student.support@nus.edu.sg
+
+servers:
+  - url: https://simple-api.nus.edu.sg/v1
+    description: Simple API server
+
+paths:
+  /hello:
+    get:
+      summary: Say hello
+      description: Returns a simple greeting message
+      responses:
+        '200':
+          description: Hello message
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+              example:
+                text: "Hello from NUS API!"
+                timestamp: "2023-09-15T10:30:00Z"
+
+  /students/{studentId}:
+    get:
+      summary: Get student information
+      description: Retrieve basic information about a student
+      parameters:
+        - name: studentId
+          in: path
+          required: true
+          description: Student ID
+          schema:
+            type: string
+            pattern: '^A\d{7}[A-Z]$'
+          example: 'A1234567B'
+      responses:
+        '200':
+          description: Student information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Student'
+              example:
+                id: "A1234567B"
+                name: "John Doe"
+                email: "john.doe@u.nus.edu"
+                faculty: "Engineering"
+        '404':
+          description: Student not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                message: "Student not found"
+                code: "NOT_FOUND"
+
+  /courses:
+    get:
+      summary: List all courses
+      description: Get a list of all available courses
+      responses:
+        '200':
+          description: List of courses
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Course'
+              example:
+                - code: "CS1010"
+                  title: "Programming Methodology"
+                  credits: 4
+                - code: "MA1521"
+                  title: "Calculus for Computing"
+                  credits: 4
+
+components:
+  schemas:
+    Message:
+      type: object
+      required:
+        - text
+      properties:
+        text:
+          type: string
+          description: The greeting message
+          example: 'Hello from NUS API!'
+        timestamp:
+          type: string
+          format: date-time
+          description: When the message was generated
+          example: '2023-09-15T10:30:00Z'
+
+    Student:
+      type: object
+      required:
+        - id
+        - name
+        - email
+        - faculty
+      properties:
+        id:
+          type: string
+          pattern: '^A\d{7}[A-Z]$'
+          description: NUS student ID
+          example: 'A1234567B'
+        name:
+          type: string
+          description: Full name of the student
+          example: 'John Doe'
+        email:
+          type: string
+          format: email
+          description: Student email address
+          example: 'john.doe@u.nus.edu'
+        faculty:
+          type: string
+          description: Faculty the student belongs to
+          enum: [Engineering, Science, Arts, Business]
+          example: 'Engineering'
+
+    Course:
+      type: object
+      required:
+        - code
+        - title
+        - credits
+      properties:
+        code:
+          type: string
+          pattern: '^[A-Z]{2,4}\d{4}[A-Z]?$'
+          description: Course code
+          example: 'CS1010'
+        title:
+          type: string
+          description: Course title
+          example: 'Programming Methodology'
+        credits:
+          type: integer
+          minimum: 1
+          maximum: 8
+          description: Number of credits
+          example: 4
+
+    Error:
+      type: object
+      required:
+        - message
+        - code
+      properties:
+        message:
+          type: string
+          description: Error message
+          example: 'Student not found'
+        code:
+          type: string
+          description: Error code
+          example: 'NOT_FOUND'

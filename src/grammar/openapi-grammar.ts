@@ -1,6 +1,6 @@
-import Parser from 'tree-sitter';
-import * as YAML from 'tree-sitter-yaml';
-import * as JSON from 'tree-sitter-json';
+const Parser = require('tree-sitter');
+const YAML = require('tree-sitter-yaml');
+const JSON = require('tree-sitter-json');
 
 export interface OpenAPINode {
   type: string;
@@ -11,8 +11,8 @@ export interface OpenAPINode {
 }
 
 export class OpenAPIGrammar {
-  private yamlParser: Parser;
-  private jsonParser: Parser;
+  private yamlParser: typeof Parser;
+  private jsonParser: typeof Parser;
 
   constructor() {
     this.yamlParser = new Parser();
@@ -145,7 +145,7 @@ export class OpenAPIGrammar {
         if (child.type === 'block_mapping_pair') {
           const method = child.children?.[0]?.text?.toLowerCase();
           if (method && validMethods.includes(method)) {
-            operations[method] = child.children[1];
+            operations[method] = child.children?.[1] || child;
           }
         }
       });
@@ -165,7 +165,7 @@ export class OpenAPIGrammar {
         if (child.type === 'block_mapping_pair') {
           const key = child.children?.[0]?.text;
           if (key) {
-            properties[key] = child.children[1];
+            properties[key] = child.children?.[1] || child;
           }
         }
       });

@@ -62,10 +62,10 @@ async function validateDocument(document: TextDocument): Promise<void> {
         diagnostics.push({
           severity: DiagnosticSeverity.Error,
           range: {
-            start: document.positionAt(diagnostic.range.start.offset),
-            end: document.positionAt(diagnostic.range.end.offset)
+            start: document.positionAt((diagnostic as any).range?.start?.offset || 0),
+            end: document.positionAt((diagnostic as any).range?.end?.offset || 0)
           },
-          message: diagnostic.message,
+          message: (diagnostic as any).message || 'Unknown error',
           source: 'openapi-validator'
         });
       });
@@ -169,8 +169,17 @@ function getWordRangeAtPosition(text: string, offset: number): { start: number; 
 }
 
 // Register handlers
-connection.onCompletion(getComponentCompletions);
-connection.onHover(getHoverInfo);
+connection.onCompletion(async (params) => {
+  const document = documents.get(params.textDocument.uri);
+  if (!document) return [];
+  return getComponentCompletions(document, params);
+});
+
+connection.onHover(async (params) => {
+  const document = documents.get(params.textDocument.uri);
+  if (!document) return null;
+  return getHoverInfo(document, params);
+});
 documents.onDidChangeContent(change => {
   validateDocument(change.document);
 });
