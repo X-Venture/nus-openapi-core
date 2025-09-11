@@ -14,8 +14,11 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
     for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SIMPLE_API_SPEC = exports.runParserExample = exports.DefaultDiagnosticCollector = exports.OpenAPIParser = void 0;
+exports.SIMPLE_API_SPEC = exports.runParserExample = exports.DefaultDiagnosticCollector = exports.OpenAPIParser = exports.SimpleOpenAPIParser = void 0;
 // Export parser and types
+var SimpleOpenAPIParser_1 = require("./parser/SimpleOpenAPIParser");
+Object.defineProperty(exports, "SimpleOpenAPIParser", { enumerable: true, get: function () { return SimpleOpenAPIParser_1.SimpleOpenAPIParser; } });
+// Also export the original parser (may have dependency issues)
 var OpenAPIParser_1 = require("./parser/OpenAPIParser");
 Object.defineProperty(exports, "OpenAPIParser", { enumerable: true, get: function () { return OpenAPIParser_1.OpenAPIParser; } });
 // Export diagnostic collector

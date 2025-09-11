@@ -1,11 +1,15 @@
 // Export parser and types
-export { OpenAPIParser } from './parser/OpenAPIParser';
+export { SimpleOpenAPIParser } from './parser/SimpleOpenAPIParser';
 export type {
   ParserResult,
   OpenAPIComponent,
   OpenAPIPath,
-  OpenAPIInfo
-} from './parser/OpenAPIParser';
+  OpenAPIInfo,
+  OpenAPIServer
+} from './parser/SimpleOpenAPIParser';
+
+// Also export the original parser (may have dependency issues)
+export { OpenAPIParser } from './parser/OpenAPIParser';
 
 // Export diagnostic collector
 export { DefaultDiagnosticCollector } from './parser/DiagnosticCollector';

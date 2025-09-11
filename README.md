@@ -84,9 +84,9 @@ npm run start:language-server
 ### Basic Parser Usage
 
 ```typescript
-import { OpenAPIParser } from '@x-venture/nus-openapi-core';
+import { SimpleOpenAPIParser } from '@x-venture/nus-openapi-core';
 
-const parser = new OpenAPIParser();
+const parser = new SimpleOpenAPIParser();
 
 // Parse from string
 const result = await parser.parse(yamlContent);
@@ -373,10 +373,10 @@ npm run example:simple-dev
 
 ## 📖 API Reference
 
-### OpenAPIParser
+### SimpleOpenAPIParser
 
 ```typescript
-class OpenAPIParser {
+class SimpleOpenAPIParser {
   // Parse OpenAPI specification
   async parse(content: string): Promise<ParserResult>
   

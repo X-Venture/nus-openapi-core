@@ -1,4 +1,4 @@
-import { OpenAPIParser } from '../parser/OpenAPIParser';
+import { SimpleOpenAPIParser } from '../parser/SimpleOpenAPIParser';
 import { readFileSync } from 'fs';
 import { join } from 'path';
 
@@ -17,7 +17,7 @@ async function analyzeSimpleAPI() {
   console.log('🎓 NUS OpenAPI Parser - Simple API Analysis');
   console.log('=' .repeat(60));
   
-  const parser = new OpenAPIParser();
+  const parser = new SimpleOpenAPIParser();
   
   // Load the simple-api.yaml file
   let specContent: string;

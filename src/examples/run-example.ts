@@ -3,7 +3,7 @@
  * This demonstrates basic parser functionality without complexity
  */
 
-import { OpenAPIParser } from '../parser/OpenAPIParser';
+import { SimpleOpenAPIParser } from '../parser/SimpleOpenAPIParser';
 
 // Simple OpenAPI specification for testing
 const SIMPLE_API_SPEC = `openapi: 3.1.0
@@ -108,7 +108,7 @@ async function runParserExample() {
   console.log('🎓 NUS OpenAPI Parser Example');
   console.log('=' .repeat(40));
   
-  const parser = new OpenAPIParser();
+  const parser = new SimpleOpenAPIParser();
   
   try {
     console.log('\n📖 Parsing OpenAPI specification...');

@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.analyzeSimpleAPI = analyzeSimpleAPI;
-const OpenAPIParser_1 = require("../parser/OpenAPIParser");
+const SimpleOpenAPIParser_1 = require("../parser/SimpleOpenAPIParser");
 const fs_1 = require("fs");
 const path_1 = require("path");
 /**
@@ -17,7 +17,7 @@ const path_1 = require("path");
 async function analyzeSimpleAPI() {
     console.log('🎓 NUS OpenAPI Parser - Simple API Analysis');
     console.log('='.repeat(60));
-    const parser = new OpenAPIParser_1.OpenAPIParser();
+    const parser = new SimpleOpenAPIParser_1.SimpleOpenAPIParser();
     // Load the simple-api.yaml file
     let specContent;
     try {

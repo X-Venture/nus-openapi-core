@@ -6,7 +6,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SIMPLE_API_SPEC = void 0;
 exports.runParserExample = runParserExample;
-const OpenAPIParser_1 = require("../parser/OpenAPIParser");
+const SimpleOpenAPIParser_1 = require("../parser/SimpleOpenAPIParser");
 // Simple OpenAPI specification for testing
 const SIMPLE_API_SPEC = `openapi: 3.1.0
 info:
@@ -109,7 +109,7 @@ exports.SIMPLE_API_SPEC = SIMPLE_API_SPEC;
 async function runParserExample() {
     console.log('🎓 NUS OpenAPI Parser Example');
     console.log('='.repeat(40));
-    const parser = new OpenAPIParser_1.OpenAPIParser();
+    const parser = new SimpleOpenAPIParser_1.SimpleOpenAPIParser();
     try {
         console.log('\n📖 Parsing OpenAPI specification...');
         const result = await parser.parse(SIMPLE_API_SPEC);
