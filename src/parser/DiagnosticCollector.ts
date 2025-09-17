@@ -1,4 +1,18 @@
-import { IDiagnosticsCollector, Diagnostic } from '@x-venture/xapi-types';
+export interface Diagnostic {
+  message: string;
+  severity: 'error' | 'warning' | 'info';
+  line?: number;
+  column?: number;
+  source?: string;
+}
+
+export interface IDiagnosticsCollector {
+  diagnostics: () => Diagnostic[];
+  add(diagnostic: Diagnostic): void;
+  clearDiagnostics(): void;
+  clearASTDiagnostics(): void;
+  clearSyntaxDiagnostics(): void;
+}
 
 export class DefaultDiagnosticCollector implements IDiagnosticsCollector {
   private _diagnostics: Diagnostic[] = [];

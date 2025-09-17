@@ -1,8 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.OpenAPIParser = void 0;
-const xapi_parser_1 = require("@x-venture/xapi-parser");
-const xapi_editor_core_1 = require("@x-venture/xapi-editor-core");
 const yaml_1 = require("yaml");
 const DiagnosticCollector_1 = require("./DiagnosticCollector");
 class OpenAPIParser {
@@ -18,15 +16,46 @@ class OpenAPIParser {
         try {
             // Reset diagnostics for new parse
             this.diagnosticCollector = new DiagnosticCollector_1.DefaultDiagnosticCollector();
+            let document;
+            const trimmedContent = content.trim();
             // Determine if content is JSON or YAML
-            const isJson = (0, xapi_editor_core_1.isJsonContent)(content);
-            // Parse content using appropriate parser
-            const ast = isJson
-                ? (0, xapi_parser_1.parseJSON)(content, this.diagnosticCollector)
-                : (0, xapi_parser_1.parseYAML)(content, this.diagnosticCollector);
+            if (trimmedContent.startsWith('{') || trimmedContent.startsWith('[')) {
+                // Parse as JSON
+                document = JSON.parse(content);
+            }
+            else {
+                // Parse as YAML
+                document = (0, yaml_1.parse)(content);
+            }
+            // Basic validation
+            const errors = [];
+            if (!document.openapi && !document.swagger) {
+                this.diagnosticCollector.add({
+                    message: 'Missing required field: openapi or swagger version',
+                    severity: 'error'
+                });
+            }
+            if (!document.info) {
+                this.diagnosticCollector.add({
+                    message: 'Missing required field: info',
+                    severity: 'error'
+                });
+            }
+            else {
+                if (!document.info.title) {
+                    this.diagnosticCollector.add({
+                        message: 'Missing required field: info.title',
+                        severity: 'error'
+                    });
+                }
+                if (!document.info.version) {
+                    this.diagnosticCollector.add({
+                        message: 'Missing required field: info.version',
+                        severity: 'error'
+                    });
+                }
+            }
             const diagnostics = this.diagnosticCollector.diagnostics();
-            // Parse document for structure analysis
-            const document = isJson ? JSON.parse(content) : (0, yaml_1.parse)(content);
             return {
                 isValid: diagnostics.length === 0,
                 document,

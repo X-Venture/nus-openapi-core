@@ -1,15 +1,13 @@
-# 🎓 NUS OpenAPI Parser & Language Server Core
+# 🎓 NUS OpenAPI Parser Core
 
-A comprehensive toolkit for **NUS students** to build sophisticated OpenAPI specification parsers with language server capabilities. This package provides everything you need to parse, validate, and analyze OpenAPI specifications with grammar support and AST processing.
+A clean, dependency-free toolkit for **NUS students** to parse, validate, and analyze OpenAPI specifications. This package provides everything you need to work with OpenAPI specs without complex external dependencies.
 
 ## 🌟 What You Get
 
 - **🔍 Smart OpenAPI Parser** - Parse, validate, and analyze YAML/JSON specifications
-- **⚡ Language Server** - Real-time validation, completion, and hover information  
-- **📝 Grammar Support** - Tree-sitter based grammar parsing for syntax highlighting
-- **🌳 AST Processing** - Abstract Syntax Tree analysis and manipulation
 - **📚 Comprehensive Examples** - Learn from complete, working implementations
 - **🎯 Student-Friendly** - Designed specifically for NUS project requirements
+- **🚫 Zero Complex Dependencies** - No X-venture packages, clean and simple
 
 ## 🚀 Quick Start
 
@@ -17,7 +15,7 @@ A comprehensive toolkit for **NUS students** to build sophisticated OpenAPI spec
 
 ```bash
 # Install the core package
-npm install @x-venture/nus-openapi-core
+npm install yaml
 
 # Install peer dependencies
 npm install ts-node@^10.9.1 typescript@^5.0.3
@@ -50,13 +48,6 @@ npm run example:parser-dev
 npm run example:simple-dev
 ```
 
-### 3. Start the Language Server
-
-```bash
-# Start the language server (runs on port 6009)
-npm run start:language-server
-```
-
 ## 🛠️ Core Features
 
 ### 📖 OpenAPI Parser
@@ -65,19 +56,6 @@ npm run start:language-server
 - **Validation Engine**: Comprehensive syntax and schema validation
 - **Component Discovery**: Automatically identify schemas, parameters, responses
 - **Reference Tracking**: Find and validate all $ref references
-
-### ⚡ Language Server Protocol (LSP)
-- **Real-time Validation**: Instant feedback on specification errors
-- **Auto-completion**: Smart suggestions for OpenAPI structures
-- **Hover Information**: Detailed documentation on hover
-- **Diagnostics**: Rich error reporting with line/column information
-- **Reference Resolution**: Navigate to component definitions
-
-### 📝 Grammar & AST Support
-- **Tree-sitter Integration**: Advanced syntax parsing capabilities
-- **YAML/JSON Grammar**: Support for both OpenAPI formats
-- **AST Analysis**: Deep structural analysis of specifications
-- **Syntax Highlighting**: Foundation for editor syntax highlighting
 
 ## 📋 Example Usage
 
@@ -111,19 +89,26 @@ if (result.isValid) {
 }
 ```
 
-### Language Server Usage
+### Enhanced Parser Usage
 
 ```typescript
-import { OpenAPILanguageServer } from '@x-venture/nus-openapi-core';
+import { OpenAPIParser } from '@x-venture/nus-openapi-core';
 
-// Create language server instance
-const server = new OpenAPILanguageServer();
+const parser = new OpenAPIParser();
 
-// Start server (programmatic usage)
-server.listen();
+// Parse with enhanced validation
+const result = await parser.parse(yamlContent);
 
-// Or run as standalone process
-// npm run start:language-server
+if (result.isValid) {
+  console.log('✅ Valid OpenAPI specification!');
+  
+  // Get detailed diagnostics
+  const diagnostics = result.diagnostics;
+  console.log(`Validation diagnostics: ${diagnostics?.length || 0}`);
+} else {
+  console.log('❌ Invalid specification');
+  result.diagnostics?.forEach(diag => console.log(diag.message));
+}
 ```
 
 ## 📚 Examples Included
@@ -146,7 +131,6 @@ Run with: `npm run example:parser`
 - 📖 Complex OpenAPI specification parsing
 - 🧩 Advanced component analysis
 - 🌐 Server configuration analysis
-- 🔐 Security scheme handling
 - 📝 Detailed operation breakdown
 - 🎓 Learning tips for NUS students
 
@@ -267,12 +251,10 @@ npm run dev
 | `npm run build` | Compile TypeScript to JavaScript | Before running examples |
 | `npm run dev` | Watch mode - rebuilds on changes | During development |
 | `npm run test` | Run test suite | Before committing changes |
-| `npm run lint` | Check code style | Before committing changes |
 | `npm run example:parser` | Run comprehensive parser example | To see advanced features |
 | `npm run example:parser-dev` | Run parser example (dev) | During development |
 | `npm run example:simple` | Run simple API example | To see basic parsing |
 | `npm run example:simple-dev` | Run simple example (dev) | During development |
-| `npm run start:language-server` | Start language server | For testing LSP features |
 
 ## 📁 Project Structure
 
@@ -280,15 +262,9 @@ npm run dev
 nus-openapi-core/
 ├── src/
 │   ├── 📖 parser/              # Core OpenAPI parsing logic
-│   │   ├── OpenAPIParser.ts    # Main parser class
-│   │   └── DiagnosticCollector.ts # Error collection
-│   │
-│   ├── ⚡ language-server/     # Language Server Protocol implementation
-│   │   ├── OpenAPILanguageServer.ts # LSP server logic
-│   │   └── server.ts          # Server entry point
-│   │
-│   ├── 🔤 grammar/            # Grammar and AST parsing
-│   │   └── openapi-grammar.ts # Tree-sitter integration
+│   │   ├── SimpleOpenAPIParser.ts   # Simple, dependency-free parser
+│   │   ├── OpenAPIParser.ts         # Enhanced parser with diagnostics
+│   │   └── DiagnosticCollector.ts   # Error collection and validation
 │   │
 │   ├── 🎯 examples/           # Complete working examples
 │   │   ├── parser-usage.ts    # Simple API demo with simple-api.yaml
@@ -304,26 +280,6 @@ nus-openapi-core/
 ├── 📋 package.json           # Dependencies and scripts
 ├── ⚙️ tsconfig.json          # TypeScript configuration
 └── 📚 README.md              # This file
-```
-
-## 🔧 Language Server Integration
-
-The language server can be integrated with various editors:
-
-### VS Code Integration
-```json
-{
-  "languageServerExample.serverPath": "node",
-  "languageServerExample.serverArgs": ["path/to/dist/language-server/server.js"]
-}
-```
-
-### Programmatic Usage
-```typescript
-import { OpenAPILanguageServer } from '@x-venture/nus-openapi-core';
-
-const server = new OpenAPILanguageServer();
-server.listen();
 ```
 
 ## 🔧 Troubleshooting
@@ -352,11 +308,6 @@ npm run example:simple
 npm run example:simple-dev
 ```
 
-#### ❌ Language Server not starting
-- **Port 6009 in use**: Close other applications using this port
-- **Node.js version**: Ensure you have Node.js >= 14.0.0
-- **TypeScript compilation**: Run `npm run build` first
-
 #### ❌ simple-api.yaml not found
 - Make sure you're running from the project root directory
 - Verify the `examples/simple-api.yaml` file exists
@@ -368,8 +319,7 @@ npm run example:simple-dev
 2. **Understand Structure**: Examine the `simple-api.yaml` file
 3. **Explore Advanced**: Try `npm run example:parser-dev` for complex features
 4. **Modify Examples**: Edit the YAML files and see how parsing changes
-5. **Language Server**: Start the LSP server and integrate with your editor
-6. **Build Your Own**: Use the parser in your own projects
+5. **Build Your Own**: Use the parser in your own projects
 
 ## 📖 API Reference
 
@@ -389,21 +339,24 @@ class SimpleOpenAPIParser {
   getComponents(document: any): OpenAPIComponent[]
   getPaths(document: any): OpenAPIPath[]
   getReferences(document: any): string[]
+  
+  // Additional utilities
+  getTags(document: any): string[]
+  getSecuritySchemes(document: any): Record<string, any>
+  getParametersByPath(document: any, path: string): any[]
+  getResponsesByPath(document: any, path: string, method: string): Record<string, any>
 }
 ```
 
-### OpenAPILanguageServer
+### OpenAPIParser (Enhanced)
 
 ```typescript
-class OpenAPILanguageServer {
-  // Start the language server
-  listen(): void
+class OpenAPIParser {
+  // Parse with enhanced validation
+  async parse(content: string): Promise<ParserResult>
   
-  // Handle document changes
-  onDocumentChange(uri: string, content: string): void
-  
-  // Provide diagnostics
-  getDiagnostics(uri: string): Diagnostic[]
+  // Same methods as SimpleOpenAPIParser
+  // Plus enhanced diagnostic collection
 }
 ```
 
@@ -422,6 +375,5 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 🙏 Acknowledgments
 
 - Built for NUS students with ❤️
-- Powered by Tree-sitter for grammar parsing
-- Uses Language Server Protocol for editor integration
+- Clean, dependency-free implementation
 - OpenAPI 3.1 specification support

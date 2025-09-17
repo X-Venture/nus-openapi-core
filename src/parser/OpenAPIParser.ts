@@ -1,9 +1,5 @@
-import { BaseNode, IBaseSymbolVisitor } from '@x-venture/xapi-parser-tree';
-import { parseJSON, parseYAML } from '@x-venture/xapi-parser';
-import { IDiagnosticsCollector, Diagnostic } from '@x-venture/xapi-types';
-import { isJsonContent } from '@x-venture/xapi-editor-core';
 import { parse as parseYaml } from 'yaml';
-import { DefaultDiagnosticCollector } from './DiagnosticCollector';
+import { DefaultDiagnosticCollector, IDiagnosticsCollector, Diagnostic } from './DiagnosticCollector';
 
 export interface ParserResult {
   isValid: boolean;
@@ -47,18 +43,49 @@ export class OpenAPIParser {
       // Reset diagnostics for new parse
       this.diagnosticCollector = new DefaultDiagnosticCollector();
 
-      // Determine if content is JSON or YAML
-      const isJson = isJsonContent(content);
+      let document: any;
+      const trimmedContent = content.trim();
       
-      // Parse content using appropriate parser
-      const ast = isJson 
-        ? parseJSON<IBaseSymbolVisitor>(content, this.diagnosticCollector)
-        : parseYAML<IBaseSymbolVisitor>(content, this.diagnosticCollector);
+      // Determine if content is JSON or YAML
+      if (trimmedContent.startsWith('{') || trimmedContent.startsWith('[')) {
+        // Parse as JSON
+        document = JSON.parse(content);
+      } else {
+        // Parse as YAML
+        document = parseYaml(content);
+      }
+
+      // Basic validation
+      const errors: Error[] = [];
+      
+      if (!document.openapi) {
+        this.diagnosticCollector.add({
+          message: 'Missing required field: openapi',
+          severity: 'error'
+        });
+      }
+      
+      if (!document.info) {
+        this.diagnosticCollector.add({
+          message: 'Missing required field: info',
+          severity: 'error'
+        });
+      } else {
+        if (!document.info.title) {
+          this.diagnosticCollector.add({
+            message: 'Missing required field: info.title',
+            severity: 'error'
+          });
+        }
+        if (!document.info.version) {
+          this.diagnosticCollector.add({
+            message: 'Missing required field: info.version',
+            severity: 'error'
+          });
+        }
+      }
 
       const diagnostics = this.diagnosticCollector.diagnostics();
-      
-      // Parse document for structure analysis
-      const document = isJson ? JSON.parse(content) : parseYaml(content);
 
       return {
         isValid: diagnostics.length === 0,
@@ -77,7 +104,7 @@ export class OpenAPIParser {
    * Get OpenAPI version from parsed document
    */
   public getVersion(document: any): string {
-    return document.openapi || document.swagger;
+    return document.openapi;
   }
 
   /**

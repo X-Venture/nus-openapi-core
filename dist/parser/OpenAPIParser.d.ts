@@ -1,4 +1,4 @@
-import { Diagnostic } from '@x-venture/xapi-types';
+import { Diagnostic } from './DiagnosticCollector';
 export interface ParserResult {
     isValid: boolean;
     document?: any;

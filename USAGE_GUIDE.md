@@ -1,4 +1,4 @@
-# 📖 Usage Guide: OpenAPI Parser & Language Server
+# 📖 Usage Guide: OpenAPI Parser
 
 This guide shows you how to use the NUS OpenAPI Core package to parse and analyze OpenAPI specifications, with special focus on the included `simple-api.yaml` example.
 
@@ -123,8 +123,8 @@ npm run example:simple-dev
 🚀 Next Steps:
    • Try modifying the simple-api.yaml file
    • Add your own components and endpoints
-   • Use the language server for real-time validation
-   • Explore grammar parsing for syntax highlighting
+   • Explore the enhanced parser for validation
+   • Build your own OpenAPI tools
 
 📚 Remember: This parser can handle both YAML and JSON formats!
 ```
@@ -170,14 +170,14 @@ components:                       # Reusable components
 ### Basic Parser Usage
 
 ```typescript
-import { OpenAPIParser } from '@x-venture/nus-openapi-core';
+import { SimpleOpenAPIParser } from '@x-venture/nus-openapi-core';
 import { readFileSync } from 'fs';
 
 // Load the simple-api.yaml file
 const yamlContent = readFileSync('examples/simple-api.yaml', 'utf-8');
 
 // Create parser instance
-const parser = new OpenAPIParser();
+const parser = new SimpleOpenAPIParser();
 
 // Parse the specification
 const result = await parser.parse(yamlContent);
@@ -204,6 +204,33 @@ if (result.isValid) {
 }
 ```
 
+### Enhanced Parser Usage
+
+```typescript
+import { OpenAPIParser } from '@x-venture/nus-openapi-core';
+
+// Create enhanced parser instance
+const parser = new OpenAPIParser();
+
+// Parse with enhanced validation
+const result = await parser.parse(yamlContent);
+
+if (result.isValid) {
+  console.log('✅ Valid OpenAPI specification!');
+  
+  // Enhanced validation provides detailed diagnostics
+  if (result.diagnostics && result.diagnostics.length > 0) {
+    console.log('📋 Validation messages:');
+    result.diagnostics.forEach(diag => {
+      console.log(`  - ${diag.message} (${diag.severity})`);
+    });
+  }
+} else {
+  console.log('❌ Invalid specification');
+  result.errors?.forEach(error => console.log(error.message));
+}
+```
+
 ### Advanced Analysis
 
 ```typescript
@@ -227,29 +254,6 @@ schemas.forEach(schema => {
 const references = parser.getReferences(result.document);
 console.log(`\n🔗 Found ${references.length} references:`);
 references.forEach(ref => console.log(`  - ${ref}`));
-```
-
-## ⚡ Language Server Usage
-
-### Start the Language Server
-
-```bash
-# Start the language server (runs on port 6009)
-npm run start:language-server
-```
-
-### Programmatic Language Server
-
-```typescript
-import { OpenAPILanguageServer } from '@x-venture/nus-openapi-core';
-
-// Create server instance
-const server = new OpenAPILanguageServer();
-
-// Start listening
-server.listen();
-
-console.log('Language server started on port 6009');
 ```
 
 ## 🧪 Modifying simple-api.yaml
@@ -373,19 +377,30 @@ npm run example:simple-dev
 - **Total References**: Number of $ref usages
 - **Reference Types**: Grouped by component type (schemas, responses, etc.)
 
+## 🎯 Parser Comparison
+
+### SimpleOpenAPIParser
+- ✅ **Lightweight**: No complex dependencies
+- ✅ **Fast**: Quick parsing and analysis
+- ✅ **Simple**: Easy to understand and use
+- ✅ **Reliable**: Dependency-free operation
+
+### OpenAPIParser (Enhanced)
+- ✅ **All SimpleOpenAPIParser features**
+- ✅ **Enhanced Validation**: Detailed diagnostic messages
+- ✅ **Better Error Reporting**: Line and column information
+- ✅ **Comprehensive Analysis**: More detailed parsing results
+
 ## 🎯 Next Steps
 
 1. **Experiment**: Modify simple-api.yaml and see how parsing changes
 2. **Create Your Own**: Build your own OpenAPI specification
-3. **Language Server**: Integrate with your favorite editor
-4. **Advanced Features**: Explore the comprehensive parser example
-5. **Build Applications**: Use the parser in your own projects
+3. **Advanced Features**: Explore the comprehensive parser example
+4. **Build Applications**: Use the parser in your own projects
 
 ## 📚 Additional Resources
 
-- [OpenAPI 3.1 Specification](https://swagger.io/specification/)
 - [YAML Syntax Guide](https://yaml.org/spec/1.2/spec.html)
 - [JSON Schema Validation](https://json-schema.org/)
-- [Language Server Protocol](https://microsoft.github.io/language-server-protocol/)
 
 Happy parsing! 🎉

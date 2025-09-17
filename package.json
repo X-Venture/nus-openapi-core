@@ -7,8 +7,6 @@
   "scripts": {
     "build": "tsc",
     "test": "jest",
-    "lint": "eslint src/**/*.ts",
-    "start:language-server": "node dist/language-server/server.js",
     "example:parser": "npm run build && node dist/examples/run-example.js",
     "example:parser-dev": "ts-node src/examples/run-example.ts",
     "example:simple": "npm run build && node dist/examples/parser-usage.js",
@@ -16,23 +14,6 @@
     "dev": "tsc --watch"
   },
   "dependencies": {
-    "@x-venture/language-server": "3.0.22",
-    "@x-venture/project-api": "3.0.17",
-    "@x-venture/xapi-aas-grammar": "0.0.8",
-    "@x-venture/xapi-editor-core": "0.0.38",
-    "@x-venture/xapi-grammar": "0.0.4",
-    "@x-venture/xapi-oas-grammar": "0.0.15",
-    "@x-venture/xapi-parser": "3.0.6",
-    "@x-venture/xapi-parser-tree": "3.0.1",
-    "@x-venture/xapi-pro-editor": "3.0.95",
-    "@x-venture/xapi-source-generator": "0.0.33",
-    "tree-sitter": "^0.20.6",
-    "tree-sitter-json": "^0.20.1",
-    "tree-sitter-yaml": "^0.5.0",
-    "vscode-languageclient": "^8.1.0",
-    "vscode-languageserver": "^8.1.0",
-    "vscode-languageserver-textdocument": "^1.0.8",
-    "vscode-languageserver-types": "^3.17.3",
     "yaml": "^2.3.1"
   },
   "devDependencies": {
